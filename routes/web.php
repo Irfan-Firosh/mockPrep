@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\internship\TechController;
 use App\Http\Controllers\Questions\LeetcodeController;
 use App\Http\Controllers\register\LoginController;
 use Illuminate\Routing\RouteGroup;
@@ -48,9 +49,14 @@ Route::middleware('auth:web')->group(function() {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
+
+// These are the ones that need to be automated
 Route::middleware('auth:web')->group(function() {
     Route::prefix('/coding')->group(function() {
         Route::get('/store', [LeetcodeController::class, 'store'])->name('code.store');
+    });
+    Route::prefix('/internships')->group(function() {
+        Route::get('/tech/fetch', [TechController::class, 'store'])->name('internships.tech.store');
     });
 });
 

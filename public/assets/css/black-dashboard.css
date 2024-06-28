@@ -17509,57 +17509,46 @@ table.tablesorter thead tr .headerSortDown {
   color: #ffffff;
 }
 
-.sidebar .nav li.active>a:not([data-toggle="collapse"]),
-.off-canvas-sidebar .nav li.active>a:not([data-toggle="collapse"]) {
-  background: transparent;
+.sidebar .nav li.active > a:not([data-toggle="collapse"]),
+.off-canvas-sidebar .nav li.active > a:not([data-toggle="collapse"]) {
+  background: #800080;
 }
 
-.sidebar .nav li.active>a:not([data-toggle="collapse"]) i,
-.sidebar .nav li.active>a:not([data-toggle="collapse"]) p,
-.off-canvas-sidebar .nav li.active>a:not([data-toggle="collapse"]) i,
-.off-canvas-sidebar .nav li.active>a:not([data-toggle="collapse"]) p {
+.sidebar .nav li.active > a:not([data-toggle="collapse"]) i,
+.sidebar .nav li.active > a:not([data-toggle="collapse"]) p,
+.off-canvas-sidebar .nav li.active > a:not([data-toggle="collapse"]) i,
+.off-canvas-sidebar .nav li.active > a:not([data-toggle="collapse"]) p {
   color: white;
 }
 
-.sidebar .nav li.active>a:not([data-toggle="collapse"]):before,
-.off-canvas-sidebar .nav li.active>a:not([data-toggle="collapse"]):before {
-  content: " ";
-  position: absolute;
-  height: 6px;
-  width: 6px;
-  top: 22px;
-  left: -4px;
-  background: #ffffff;
-  border-radius: 50%;
-}
 
-.sidebar .nav li.active>a[data-toggle="collapse"],
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"] {
-  background: transparent;
+.sidebar .nav li.active > a[data-toggle="collapse"],
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] {
+  background: #800080; /* Purple background when active */
   box-shadow: none;
   color: #ffffff;
 }
 
-.sidebar .nav li.active>a[data-toggle="collapse"] i,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"] i {
+.sidebar .nav li.active > a[data-toggle="collapse"] i,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] i {
   color: #ffffff;
 }
 
-.sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a {
+.sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a {
   box-shadow: none;
 }
 
-.sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a .sidebar-mini-icon,
-.sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a .sidebar-normal,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a .sidebar-mini-icon,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a .sidebar-normal {
+.sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a .sidebar-mini-icon,
+.sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a .sidebar-normal,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a .sidebar-mini-icon,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a .sidebar-normal {
   color: #ffffff;
   font-weight: 400;
 }
 
-.sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a:before,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"]+div .nav .active a:before {
+.sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a:before,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"] + div .nav .active a:before {
   content: " ";
   position: absolute;
   height: 6px;
@@ -17567,11 +17556,10 @@ table.tablesorter thead tr .headerSortDown {
   top: 17px;
   left: -4px;
   background: #ffffff;
-  border-radius: 50%;
 }
 
-.sidebar .nav li.active>a[data-toggle="collapse"]:before,
-.off-canvas-sidebar .nav li.active>a[data-toggle="collapse"]:before {
+.sidebar .nav li.active > a[data-toggle="collapse"]:before,
+.off-canvas-sidebar .nav li.active > a[data-toggle="collapse"]:before {
   content: " ";
   position: absolute;
   height: 6px;
@@ -17579,8 +17567,8 @@ table.tablesorter thead tr .headerSortDown {
   top: 22px;
   left: -4px;
   background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
 }
+
 
 .sidebar .nav p,
 .off-canvas-sidebar .nav p {

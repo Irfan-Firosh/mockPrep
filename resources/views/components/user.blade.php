@@ -44,13 +44,24 @@
       0% { opacity: 1; }
       100% { opacity: 0; }
     }
+    .active2 {
+      background-color: purple;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+    
+    .nav-item:hover {
+      background-color: purple;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
 </style>
 </head>
 
 <body class="">
   <div class="wrapper">
-    <div class="sidebar">
-      <div class="sidebar-wrapper">
+    <div class="sidebar" style="background-color: rgb(165, 19, 165);">
+      <div class="sidebar-wrapper" style="background-color: rgb(165, 19, 165)">
         <div class="logo">
           <a href="javascript:void(0)" class="simple-text logo-mini">
           
@@ -63,7 +74,7 @@
       </div>
     </div>
     <!-- Navbar Starting -->
-    <div class="main-panel">
+    <div class="main-panel" style="border: none;">
       <nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
         <div class="container-fluid">
           <div class="navbar-wrapper">
