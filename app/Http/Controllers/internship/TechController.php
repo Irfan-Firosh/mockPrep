@@ -7,6 +7,8 @@ use DOMDocument;
 use DOMXPath;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Careerjet_API;
+use Exception;
 
 class TechController extends Controller
 {
@@ -15,9 +17,25 @@ class TechController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    // Retrieve user preferences
+    public function index(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'city' => 'required'
+        ]);
+
+        $location = $request->input('city');
+        $title = $request->input('title');
+        $code = NULL;
+        if ($request->input('country') == "USA") {
+            $code = "en_US";
+        } else {
+            $code = "en_CA";
+        }
+
+        return redirect()->route('internships.fetch', [1, $code, $title, $location, $request]);
     }
 
     /**
@@ -25,63 +43,54 @@ class TechController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected function fetch()
+    protected function fetch($page, $code, $title, $location)
     {
-        // Place from where internships are fetched
-        $url = "https://github.com/SimplifyJobs/Summer2025-Internships/blob/dev/README.md";
+        $api = new Careerjet_API($code);
+        $result = $api->search(array(
+            'keywords' => $title,
+            'location' => $location,
+            'page' => $page ,
+            'pagesize' => 50,
+            'affid' => '678bdee048',
+        ));
+        if ( $result->type == 'JOBS' ) {
+            $jobs = $result->jobs;
+            $hits = $result->hits;
+            $pages = $result->pages;
+            $next_page = true;
+            $prev_page = false;
+            $curr_page = $page;
 
-        $httpClient = new Client();
-        $response = $httpClient->request('get', $url, [
-            'timeout' => 100, // Adjust timeout as needed
-            'verify' => false, // Set to true to verify SSL
-        ]);
-        $htmlString = (string)$response->getBody();
+            # Basic paging code
+            if( $page > 1 && $page <= $result->pages ){
+                //echo "Use \$page - 1 to link to previous page\n";
+                $prev_page = true;
+            }
+            if ( $page < $result->pages ){
+                //echo "Use \$page + 1 to link to next page\n" ;
+                $next_page = true;
+            }
+            if ($page > $result->pages || $page < 1) {
+                return ['no_jobs' => 'No jobs found on this page'];
+            }
 
-        // Testing html string
-        /* $htmlString = '
-        <table>
-            <tbody>
-                <tr>
-                    <td>PwC</td>
-                    <td>Products &amp; Technology Intern 🛂</td>
-                    <td>
-                    <details>
-                        <summary><strong>4 locations</strong></summary>
-                        Dallas, TX<br>Tampa, FL<br>Chicago, IL<br>New York, NY
-                    </details>
-                    </td>
-                    <td><a href="https://jobs.us.pwc.com/job/-/-/932/66835864048?utm_source=Simplify&amp;ref=Simplify" rel="nofollow"><img src="./Summer2025-Internships_README.md at dev · SimplifyJobs_Summer2025-Internships_files/68747470733a2f2f692e696d6775722e636f6d2f75314b4e55387a2e706e67" width="118" alt="Apply" data-canonical-src="https://i.imgur.com/u1KNU8z.png" style="max-width: 100%;"></a></td>
-                    <td>Jun 26</td>
-                </tr>
-            </tbody>
-        </table>
-        '; */
-
-        libxml_use_internal_errors(true);
-        $doc = new DOMDocument();
-        $doc->loadHTML($htmlString);
-        $xpath = new DOMXPath($doc);
-
-        $rows = $xpath->query('//table/tbody/tr');
-        foreach ($rows as $row) {
-            $title = $xpath->query('./td[1]', $row)->item(0)->textContent;
-            echo $title;
+            return ['jobs' => $jobs, 'hits' => $result->hits, 'pages' => $pages,
+                    'next_page' => $next_page, 'prev_page' => $prev_page, 'curr_page' => $curr_page,
+                    'location' => $location, 'code' => $code, 'title' => $title];
         }
 
-        /* $rows = $xpath->evaluate('//tbdoy/tr');
-        foreach ($rows as $row) {
-            $company = $xpath->query('td[1]', $row)->item(0)->textContent;
-            $role = $xpath->query('td[2]', $row)->item(0)->textContent;
-            $location = $xpath->query('td[3]', $row)->item(0)->textContent;
-            $application = $xpath->query('td[4]', $row)->item(0)->textContent;
-            //$anchor = $xpath->query('/a', $application)->item(0);
-            if (!$application) {
-                $application = " Test";
-            }
-            $datePosted = $xpath->query('td[5]', $row)->item(0)->textContent;
-            echo $company;
-        } */
+        return view('internship.display', ['invalid' => "Error fetching jobs"]);
 
+        // Resolve location to do later....
+        # When location is ambiguous
+        if ( $result->type == 'LOCATIONS' ) {
+            $locations = $result->solveLocations ;
+            foreach ( $locations as $loc ) {
+            echo $loc->name."\n" ; # For end user display
+            ## Use $loc->location_id when making next search call
+            ## as 'location_id' parameter
+            }
+        }
     }
 
     /**
@@ -90,9 +99,16 @@ class TechController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store($page, $code, $title, $location)
     {
-        $this->fetch();
+        // Fetch location from req
+        try {
+            $ret = $this->fetch($page, $code, $title, $location);
+            return view('internship.displayInternship', $ret);
+        }
+        catch (Exception $e) {
+            return view('internship.displayInternship', ['invalid' => "Error fetching jobs"]);
+        }
     }
 
     /**

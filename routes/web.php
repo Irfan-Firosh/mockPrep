@@ -46,6 +46,14 @@ Route::middleware('auth:web')->group(function() {
         return view('userAccess.dashboard');
     })->name('user.home');
     Route::get('/techbank', [LeetcodeController::class, 'index'])->name('techbank.display');
+    Route::post('/techbank', [LeetcodeController::class, 'search'])->name('techbank.search');
+    Route::prefix('analytics')->group(function() {
+        Route::get('/', [LeetcodeController::class, 'analytics'])->name('analytics');
+        Route::get('/setname', function() {
+            return view('analytics.nameform');
+        })->name('analytics.setname');
+        Route::post('/setname', [LeetcodeController::class, 'changeName'])->name('analytics.setname');
+    });
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -56,7 +64,11 @@ Route::middleware('auth:web')->group(function() {
         Route::get('/store', [LeetcodeController::class, 'store'])->name('code.store');
     });
     Route::prefix('/internships')->group(function() {
-        Route::get('/tech/fetch', [TechController::class, 'store'])->name('internships.tech.store');
+        Route::get('/', function() {
+            return view('internship.form');
+        })->name('internships.display');
+        Route::post('/', [TechController::class, 'index'])->name('internships.retrieve');
+        Route::get('/fetch/{page}/{location}/{title}/{code}', [TechController::class, 'store'])->name('internships.fetch');
     });
 });
 

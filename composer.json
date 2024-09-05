@@ -26,7 +26,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "classmap": [
+            "vendor/careerjet/api-client/Careerjet_API.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

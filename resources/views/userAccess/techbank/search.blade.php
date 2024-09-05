@@ -205,7 +205,7 @@
                             </div>
                             <div class="col mt-3">
                                 <div class="container">
-                                    {{ $questions ?? ''->links() }}
+                                    
                                 </div>
                             </div>
                         </div>

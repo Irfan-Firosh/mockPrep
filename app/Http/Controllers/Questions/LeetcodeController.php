@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Questions;
 
 use App\Http\Controllers\Controller;
 use App\Models\questions\leetcodebank;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class LeetcodeController extends Controller
 {
@@ -22,7 +24,6 @@ class LeetcodeController extends Controller
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
-        dd($res);
         if ($e = curl_error($ch)) {
             curl_close($ch);
             return $e;
@@ -34,7 +35,7 @@ class LeetcodeController extends Controller
 
     public function index(Request $request)
     {
-        $questions = leetcodebank::inRandomOrder()->paginate(16);
+        $questions = leetcodebank::inRandomOrder()->paginate(64);
         return view('userAccess.techbank.leetcode', compact('questions'));
     }
 
@@ -89,21 +90,78 @@ class LeetcodeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function search(Request $request)
     {
-        //
+        $search = $request->input('query');
+        $diff = $request->input('difficulty');
+        $questions = LeetcodeBank::where(function ($query) use ($search, $diff) {
+            if ($search) {
+                $query->where('title', 'LIKE', '%' . $search . '%');
+            }
+            if ($diff != "nothing") {
+                $query->where('difficulty', $diff);
+            }
+        })->get();
+
+        return view('userAccess.techbank.search', ['questions' => $questions]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    // commands for analytics
+    public function analytics()
     {
-        //
+        $username = Auth::user()->leetcodename;
+        if ($username == null) {
+            return redirect()->route('analytics.setname');
+        }
+        //fetch user results from api
+        $url = "https://alfa-leetcode-api.onrender.com/userProfile/" . $username;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $res = curl_exec($ch);
+        if ($e = curl_error($ch)) {
+            curl_close($ch);
+            return $e;
+        }
+        $decoded = json_decode($res, true);
+        curl_close($ch);
+
+        if (empty($decoded)) {
+            return redirect()->route('analytics.setname')->with('invalid', "$username is an invalid username");
+        }
+
+        $data = [
+            "totalSolved" => $decoded['totalSolved'],
+            "totalSubmissions" => $decoded['totalSubmissions'],
+            "easySolved" => $decoded['easySolved'],
+            "totalEasy" => $decoded['totalEasy'],
+            "mediumSolved" => $decoded['mediumSolved'],
+            "totalMedium" => $decoded['totalMedium'],
+            "hardSolved" => $decoded['hardSolved'],
+            "totalHard" => $decoded['totalHard'],
+            "ranking" => $decoded['ranking'],
+            "submissionCalendar" => $decoded['submissionCalendar'],
+            "recentSubmissions" => $decoded['recentSubmissions'],
+        ];
+
+        return view('analytics.graphs', ['data' => $data]);
     }
+
+    public function changeName(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+        ]);
+        // change the thingy
+        $id = Auth::user()->id;
+        $user = User::find($id);
+        $user->leetcodename = $request->input('name');
+        $user->save();
+        return redirect()->route('analytics', ['success' => "Set name to $user->leetcodename"]);
+    }
+
+    // end analytics commands
+
 
     /**
      * Update the specified resource in storage.
